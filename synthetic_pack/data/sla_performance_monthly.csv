@@ -1,0 +1,49 @@
+customer,month,kpi_name,kpi_target,kpi_actual,kpi_failure,monthly_charge_gbpk,service_credit_gbpk
+Harlow Health NHS Trust,2025-10,Site Availability %,98.5,98.9,N,2700,0
+Harlow Health NHS Trust,2025-11,Site Availability %,98.5,98.8,N,2700,0
+Harlow Health NHS Trust,2025-12,Site Availability %,98.5,98.7,N,2700,0
+Harlow Health NHS Trust,2026-01,Site Availability %,98.5,98.6,N,2700,0
+Harlow Health NHS Trust,2026-02,Site Availability %,98.5,98.9,N,2700,0
+Harlow Health NHS Trust,2026-03,Site Availability %,98.5,98.4,Y,2700,54
+Harlow Health NHS Trust,2026-04,Site Availability %,98.5,98.7,N,2700,0
+Harlow Health NHS Trust,2026-05,Site Availability %,98.5,98.1,Y,2700,54
+Harlow Health NHS Trust,2026-06,Site Availability %,98.5,98.4,Y,2700,54
+Harlow Health NHS Trust,2026-07,Site Availability %,98.5,98.6,N,2700,0
+Harlow Health NHS Trust,2026-08,Site Availability %,98.5,98.0,Y,2700,54
+Harlow Health NHS Trust,2026-09,Site Availability %,98.5,98.3,Y,2700,54
+Meridian Retail Group plc,2025-10,Cleanliness Audit Score %,92.0,94.1,N,1750,0
+Meridian Retail Group plc,2025-11,Cleanliness Audit Score %,92.0,93.6,N,1750,0
+Meridian Retail Group plc,2025-12,Cleanliness Audit Score %,92.0,93.9,N,1750,0
+Meridian Retail Group plc,2026-01,Cleanliness Audit Score %,92.0,94.3,N,1750,0
+Meridian Retail Group plc,2026-02,Cleanliness Audit Score %,92.0,93.2,N,1750,0
+Meridian Retail Group plc,2026-03,Cleanliness Audit Score %,92.0,93.8,N,1750,0
+Meridian Retail Group plc,2026-04,Cleanliness Audit Score %,92.0,94.0,N,1750,0
+Meridian Retail Group plc,2026-05,Cleanliness Audit Score %,92.0,93.5,N,1750,0
+Meridian Retail Group plc,2026-06,Cleanliness Audit Score %,92.0,93.1,N,1750,0
+Meridian Retail Group plc,2026-07,Cleanliness Audit Score %,92.0,92.8,N,1750,0
+Meridian Retail Group plc,2026-08,Cleanliness Audit Score %,92.0,91.2,Y,1750,26
+Meridian Retail Group plc,2026-09,Cleanliness Audit Score %,92.0,93.0,N,1750,0
+Castlebrook Borough Council,2025-10,Performance Standards Met %,95.0,97.2,N,1200,0
+Castlebrook Borough Council,2025-11,Performance Standards Met %,95.0,96.8,N,1200,0
+Castlebrook Borough Council,2025-12,Performance Standards Met %,95.0,97.5,N,1200,0
+Castlebrook Borough Council,2026-01,Performance Standards Met %,95.0,96.9,N,1200,0
+Castlebrook Borough Council,2026-02,Performance Standards Met %,95.0,97.1,N,1200,0
+Castlebrook Borough Council,2026-03,Performance Standards Met %,95.0,97.4,N,1200,0
+Castlebrook Borough Council,2026-04,Performance Standards Met %,95.0,96.6,N,1200,0
+Castlebrook Borough Council,2026-05,Performance Standards Met %,95.0,97.0,N,1200,0
+Castlebrook Borough Council,2026-06,Performance Standards Met %,95.0,97.3,N,1200,0
+Castlebrook Borough Council,2026-07,Performance Standards Met %,95.0,96.8,N,1200,0
+Castlebrook Borough Council,2026-08,Performance Standards Met %,95.0,97.2,N,1200,0
+Castlebrook Borough Council,2026-09,Performance Standards Met %,95.0,97.5,N,1200,0
+Bridgeway Logistics Limited,2025-10,Dock Turnaround KPI %,96.0,97.1,N,900,0
+Bridgeway Logistics Limited,2025-11,Dock Turnaround KPI %,96.0,96.8,N,900,0
+Bridgeway Logistics Limited,2025-12,Dock Turnaround KPI %,96.0,97.0,N,900,0
+Bridgeway Logistics Limited,2026-01,Dock Turnaround KPI %,96.0,96.5,N,900,0
+Bridgeway Logistics Limited,2026-02,Dock Turnaround KPI %,96.0,95.4,Y,900,9
+Bridgeway Logistics Limited,2026-03,Dock Turnaround KPI %,96.0,96.6,N,900,0
+Bridgeway Logistics Limited,2026-04,Dock Turnaround KPI %,96.0,96.9,N,900,0
+Bridgeway Logistics Limited,2026-05,Dock Turnaround KPI %,96.0,97.2,N,900,0
+Bridgeway Logistics Limited,2026-06,Dock Turnaround KPI %,96.0,96.8,N,900,0
+Bridgeway Logistics Limited,2026-07,Dock Turnaround KPI %,96.0,97.0,N,900,0
+Bridgeway Logistics Limited,2026-08,Dock Turnaround KPI %,96.0,96.7,N,900,0
+Bridgeway Logistics Limited,2026-09,Dock Turnaround KPI %,96.0,97.1,N,900,0

@@ -1,0 +1,13 @@
+clause_type,what_to_look_for,standard_position_or_rule,default_severity
+Change of control,"Termination, consent or payment triggered by change of ownership of the Supplier/Company",Customer contracts: any CoC termination or consent right. Employment: any single-trigger payment,High
+Persistent failure / termination for service levels,Customer right to terminate following repeated KPI failures,Flag any; compare threshold to actual SLA data,High
+Uncapped liability,"No cap on liability, or liability for loss of profit/revenue",Standard: cap at 100% of annual charges; exclude indirect loss,High
+Auto-renewal with short notice,Automatic renewal with notice window under 90 days,Flag if notice under 90 days; note deadline relative to today,Medium
+Most-favoured-customer pricing,Warranty or obligation to match the best price offered to others,Flag any,High
+Exclusivity,Obligation to buy/lease exclusively from one party,"Flag any, esp. longer than 3 years",Medium
+Take-or-pay / minimum commitment,Payment for minimum volumes whether used or not,Flag; quantify annual commitment,High
+Uncapped price escalation,Indexation without a cap,Flag; standard is CPI with cap of 3-4%,Medium
+"Fixed price, no indexation",Price fixed for full term including renewal with no inflation link,Flag; assess margin impact,Medium
+Termination for convenience,Counterparty can exit without cause,Flag if notice under 6 months on customer contracts,Medium
+Early termination fee,Payment required to exit early,Flag if more than 50% of remaining payments,High
+Single-trigger executive payments / long notice,Payments on CoC regardless of continued employment; notice over 6 months,Flag any,High

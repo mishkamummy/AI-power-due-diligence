@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Due Diligence Accelerator - Project Northgate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.viz-root{
+  color-scheme:light;
+  --page:#f9f9f7; --surface-1:#fcfcfb; --card:#ffffff;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,0.10);
+  --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a; --series-4:#eda100; --series-5:#e87ba4;
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --accent:#d24e01;
+  --seq-0:#f0efec; --seq-1:#cde2fb; --seq-2:#86b6ef; --seq-3:#3987e5; --seq-4:#1c5cab; --seq-5:#0d366b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--page);color:var(--text-primary);font-size:14px}
+header{background:#111;color:#fff;padding:14px 28px;display:flex;align-items:center;gap:18px}
+header .bar{width:28px;height:4px;background:var(--accent)}
+header h1{font-size:18px;margin:0;font-weight:600}
+header .sub{color:#c3c2b7;font-size:12px}
+header .right{margin-left:auto;font-size:12px;color:#c3c2b7;text-align:right}
+nav{display:flex;gap:2px;padding:0 28px;background:#1d1d1c}
+nav button{background:none;border:0;color:#c3c2b7;padding:11px 16px;font-size:13px;cursor:pointer;border-bottom:3px solid transparent}
+nav button.active{color:#fff;border-bottom-color:var(--accent)}
+nav button .tag{font-size:10px;background:var(--accent);color:#fff;border-radius:8px;padding:1px 6px;margin-left:6px}
+main{padding:22px 28px;max-width:1500px;margin:0 auto}
+section{display:none} section.active{display:block}
+h2{font-size:20px;margin:4px 0 4px;font-weight:600}
+.lede{color:var(--text-secondary);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+.tile{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.tile .v{font-size:28px;font-weight:600;line-height:1.1}
+.tile .l{color:var(--text-secondary);font-size:12px;margin-top:4px}
+.pipeline{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.step{border:1px solid var(--border);border-radius:8px;padding:12px;background:var(--surface-1)}
+.step .n{color:var(--accent);font-weight:700;font-size:13px}
+.step .t{font-weight:600;margin:2px 0 4px}
+.step .d{color:var(--text-secondary);font-size:12px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600;padding:8px;border-bottom:1px solid var(--axis)}
+td{padding:9px 8px;border-bottom:1px solid var(--grid);vertical-align:top}
+tbody tr.click{cursor:pointer} tbody tr.click:hover{background:#f3f2ee}
+tr.rejected td{opacity:.45;text-decoration:line-through}
+.num{font-variant-numeric:tabular-nums}
+.sev{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:12px;white-space:nowrap}
+.sev i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.sev.High i{background:var(--critical)} .sev.Medium i{background:var(--serious)} .sev.Low i{background:var(--warning)}
+.chip{display:inline-block;font-size:11px;border:1px solid var(--border);border-radius:10px;padding:1px 8px;margin:1px 2px 1px 0;color:var(--text-secondary);background:var(--surface-1)}
+.status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.status.Accepted{background:#e3f4e3;color:#006300} .status.Rejected{background:#f6e1e1;color:#9b2222}
+.status.Escalated{background:#fdeedd;color:#8a4a00} .status.Pending{background:#eeeeea;color:var(--text-secondary)}
+.conf{display:flex;align-items:center;gap:6px}
+.conf .b{width:54px;height:6px;background:var(--grid);border-radius:3px;overflow:hidden}
+.conf .b span{display:block;height:100%;background:var(--series-1)}
+.filters{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+select,input[type=text],textarea{font:inherit;border:1px solid var(--axis);border-radius:6px;padding:6px 8px;background:#fff}
+button.btn{font:inherit;border:1px solid var(--axis);background:#fff;border-radius:6px;padding:6px 12px;cursor:pointer}
+button.btn.primary{background:#111;color:#fff;border-color:#111}
+button.btn:hover{filter:brightness(.95)}
+.drawer{position:fixed;top:0;right:-640px;width:620px;height:100%;background:#fff;box-shadow:-8px 0 30px rgba(0,0,0,.15);transition:right .2s;z-index:10;overflow:auto;padding:22px}
+.drawer.open{right:0}
+.drawer h3{margin:4px 0 10px}
+.quote{background:#faf7f2;border-left:3px solid var(--accent);padding:10px 12px;font-family:Georgia,serif;font-size:14px;line-height:1.5;margin:8px 0 14px}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:13px;margin-bottom:14px}
+.kv div:nth-child(odd){color:var(--muted)}
+.datacheck{background:#eef5fd;border:1px solid #cde2fb;border-radius:8px;padding:10px 12px;margin-bottom:14px}
+.datacheck.alert{background:#fdecec;border-color:#f3c4c4}
+.close{float:right;cursor:pointer;font-size:20px;border:0;background:none}
+.entity{display:grid;grid-template-columns:48px 1fr 360px;gap:16px;align-items:start}
+.rank{font-size:30px;font-weight:700;color:var(--muted)}
+.rag{font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;margin-left:8px}
+.rag.Red{background:#fdecec;color:#9b2222} .rag.Amber{background:#fdf3dc;color:#7a5200} .rag.Green{background:#e3f4e3;color:#006300}
+.signals{margin:8px 0 0;padding-left:18px;color:var(--text-secondary)} .signals li{margin:3px 0}
+.narr{font-size:13px;margin-top:8px;color:var(--text-primary);line-height:1.45}
+.stack{display:flex;height:22px;gap:2px;margin-top:6px}
+.stack div{height:100%;position:relative} .stack div:first-child{border-radius:4px 0 0 4px} .stack div:last-child{border-radius:0 4px 4px 0}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--text-secondary);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.heat td.c{text-align:center;font-weight:600;font-size:12px;border:2px solid var(--card);border-radius:4px}
+#tip{position:fixed;pointer-events:none;background:#111;color:#fff;font-size:12px;padding:6px 9px;border-radius:6px;display:none;z-index:20;max-width:320px}
+pre.memo{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;background:var(--surface-1);border:1px solid var(--border);border-radius:8px;padding:14px;max-height:640px;overflow:auto}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.hit{border-bottom:1px solid var(--grid);padding:10px 0} .hit .m{font-size:12px;color:var(--muted)}
+mark{background:#fde9c8}
+.clause{padding:6px 8px;border-radius:6px;font-size:13px;line-height:1.45} .clause.flag{background:#fdecec}
+.small{font-size:12px;color:var(--text-secondary)}
+.ok{color:#006300;font-weight:600} .bad{color:#9b2222;font-weight:600}
+</style>
+</head>
+<body class="viz-root">
+<header>
+  <div class="bar"></div>
+  <div><h1>AI Due Diligence Accelerator</h1><div class="sub">Project Northgate - Northgate Facilities Services (c.GBP 180m revenue) - synthetic VDR</div></div>
+  <div class="right" id="runinfo"></div>
+</header>
+<nav id="nav">
+  <button data-tab="overview" class="active">Overview</button>
+  <button data-tab="register">Risk &amp; Exception Register<span class="tag">Feature 1</span></button>
+  <button data-tab="insights">Cross-Workstream Insights<span class="tag">Feature 2</span></button>
+  <button data-tab="kb">Deal Knowledge Base</button>
+  <button data-tab="memo">Draft Outputs</button>
+  <button data-tab="gov">Governance &amp; Accuracy</button>
+</nav>
+<main>
+
+<section id="overview" class="active">
+  <h2>Deal-room status</h2>
+  <p class="lede">Documents ingested from the VDR, checked against the clause playbook and cross-referenced with client data. AI produces first-draft findings for analyst review; nothing leaves this machine.</p>
+  <div class="tiles" id="tiles"></div>
+  <div class="card">
+    <div style="font-weight:600;margin-bottom:10px">Pipeline</div>
+    <div class="pipeline">
+      <div class="step"><div class="n">01</div><div class="t">Ingest</div><div class="d">PDF text extraction, clause segmentation with page refs, searchable index</div></div>
+      <div class="step"><div class="n">02</div><div class="t">Extract</div><div class="d">Normalised key terms: value, term, indexation, liability cap, notice</div></div>
+      <div class="step"><div class="n">03</div><div class="t">Flag &amp; Prioritise</div><div class="d">12 playbook rules + optional LLM second reviewer; severity &amp; confidence</div></div>
+      <div class="step"><div class="n">04</div><div class="t">Cross-Reference</div><div class="d">Joins contracts to revenue, SLA and fleet data; quantifies GBP impact</div></div>
+      <div class="step"><div class="n">05</div><div class="t">Accelerate Reporting</div><div class="d">Draft findings memo, info request list, register export</div></div>
+      <div class="step"><div class="n">06</div><div class="t">Audit &amp; Govern</div><div class="d">Clause traceability, human review log, accuracy vs answer key</div></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div style="font-weight:600;margin-bottom:8px">Top risks right now</div><div id="toprisks"></div></div>
+    <div class="card"><div style="font-weight:600;margin-bottom:8px">Time-critical items</div><div id="urgent"></div></div>
+  </div>
+</section>
+
+<section id="register">
+  <h2>Risk &amp; Exception Register</h2>
+  <p class="lede">Every non-standard provision found in the deal room, ranked by severity and confidence. Each row traces to the clause and page; click a row to see the evidence and record the analyst decision.</p>
+  <div class="filters">
+    <select id="fSev"><option value="">All severities</option><option>High</option><option>Medium</option><option>Low</option></select>
+    <select id="fDoc"><option value="">All documents</option></select>
+    <select id="fWs"><option value="">All workstreams</option><option>Legal</option><option>Commercial</option><option>Operational</option><option>Financial</option><option>HR</option></select>
+    <select id="fSt"><option value="">All review states</option><option>Pending</option><option>Accepted</option><option>Escalated</option><option>Rejected</option></select>
+    <span style="margin-left:auto"></span>
+    <a href="/export/register.csv"><button class="btn">Export register (CSV)</button></a>
+  </div>
+  <div class="card" style="padding:4px 10px">
+    <table><thead><tr><th>ID</th><th>Severity</th><th>Counterparty</th><th>Issue</th><th>Source</th><th>Data cross-check</th><th>Confidence</th><th>Review</th></tr></thead>
+    <tbody id="regBody"></tbody></table>
+  </div>
+</section>
+
+<section id="insights">
+  <h2>Cross-Workstream Insight Layer</h2>
+  <p class="lede">Contract flags joined to revenue, SLA and fleet data, so risks that sit across streams show up in one place. Score = legal severity + revenue exposed to exit rights + operational evidence + quantified GBP cost + number of streams linked.</p>
+  <div class="card">
+    <div class="legend" id="stackLegend"></div>
+  </div>
+  <div id="entities"></div>
+  <div class="card">
+    <div style="font-weight:600;margin-bottom:4px">Workstream heatmap</div>
+    <div class="small" style="margin-bottom:8px">Score contribution by stream (darker = higher). Hover a cell for the value.</div>
+    <table class="heat" id="heat"></table>
+  </div>
+</section>
+
+<section id="kb">
+  <h2>Structured Deal Knowledge Base</h2>
+  <p class="lede">Clause-level index across every VDR document. Search returns the clause, page and document, so you can go straight to the source.</p>
+  <div class="filters"><input type="text" id="q" placeholder="e.g. change of control, liability, notice, RPI" style="width:420px"><button class="btn primary" id="qb">Search</button>
+    <span class="small">Try:</span> <button class="btn" data-q="change of control">change of control</button><button class="btn" data-q="terminate notice">terminate notice</button><button class="btn" data-q="liability">liability</button><button class="btn" data-q="CPI RPI">CPI RPI</button></div>
+  <div class="grid2">
+    <div class="card"><div style="font-weight:600">Results</div><div id="hits" class="small">Enter a query.</div></div>
+    <div class="card"><div style="font-weight:600;margin-bottom:6px">Documents &amp; normalised key terms</div><div id="docs"></div></div>
+  </div>
+</section>
+
+<section id="memo">
+  <h2>Accelerated Workstream Outputs</h2>
+  <p class="lede">First drafts generated from the register and insight layer, reflecting analyst decisions (rejected items drop out). Analysts edit these drafts rather than starting from a blank page.</p>
+  <div class="filters"><a href="/export/memo.md"><button class="btn">Download memo (.md)</button></a><button class="btn" id="refreshMemo">Refresh after review</button></div>
+  <div class="grid2">
+    <div class="card"><div style="font-weight:600;margin-bottom:6px">Draft key findings memo</div><pre class="memo" id="memoText"></pre></div>
+    <div class="card"><div style="font-weight:600;margin-bottom:6px">Draft information request list</div><table><thead><tr><th>Priority</th><th>Request</th><th>Ref</th></tr></thead><tbody id="irl"></tbody></table></div>
+  </div>
+</section>
+
+<section id="gov">
+  <h2>Governance &amp; Accuracy</h2>
+  <p class="lede">The tool is scored against a planted-issue answer key, and every analyst decision is logged. These two things are what make the output safe to rely on.</p>
+  <div class="tiles" id="evalTiles" style="grid-template-columns:repeat(5,1fr)"></div>
+  <div class="grid2">
+    <div class="card"><div style="font-weight:600;margin-bottom:6px">Answer key reconciliation</div><table><thead><tr><th>Key</th><th>Contract</th><th>Clause</th><th>Expected</th><th>Found</th></tr></thead><tbody id="evalBody"></tbody></table></div>
+    <div class="card"><div style="font-weight:600;margin-bottom:6px">Controls</div>
+      <ul class="small" style="line-height:1.7;padding-left:18px">
+        <li><b>Traceability</b>: every finding cites document, clause and page, with a verbatim quote</li>
+        <li><b>Confidence</b>: rule strength + data corroboration + LLM agreement (when enabled)</li>
+        <li><b>Human-in-the-loop</b>: nothing reaches the memo unreviewed; rejections are excluded and logged</li>
+        <li><b>Clean control</b>: Bridgeway contract (04) must produce no High flags</li>
+        <li><b>Confidentiality</b>: runs locally; the optional LLM call goes through an enterprise API under zero-retention terms</li>
+        <li><b>Known limits</b>: rules are tuned on this pack; the LLM layer and analyst sampling guard against over-fitting on new documents</li>
+      </ul>
+      <div style="font-weight:600;margin:10px 0 6px">Review audit trail</div>
+      <table><thead><tr><th>When</th><th>Finding</th><th>Decision</th><th>Note</th></tr></thead><tbody id="audit"></tbody></table>
+      <div style="margin-top:8px"><button class="btn" id="resetReviews">Reset review log</button></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="drawer" id="drawer"></div>
+<div id="tip"></div>
+
+<script>
+const S = {data:null};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sev = s => `<span class="sev ${s}"><i></i>${s}</span>`;
+const gbp = v => v==null ? '' : (Math.abs(v)>=1e6 ? `GBP ${(v/1e6).toFixed(1)}m` : `GBP ${(v/1e3).toFixed(0)}k`);
+const short = f => f.replace(/^\d+_/, '').replace(/_/g,' ').replace('.pdf','');
+const review = id => (S.data.reviews.latest[id] || {status:'Pending'});
+
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#nav button').forEach(x => x.classList.toggle('active', x===b));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('active', s.id===b.dataset.tab));
+  if (b.dataset.tab==='memo') loadMemo();
+});
+
+async function load(){
+  S.data = await (await fetch('/api/data')).json();
+  const d = S.data;
+  $('#runinfo').innerHTML = `Analysis run ${d.run_at} - ${d.runtime}s<br>As-of date ${d.today} - ${esc(d.llm)}`;
+  renderOverview(); renderRegister(); renderInsights(); renderDocs(); renderGov();
+}
+
+function renderOverview(){
+  const d=S.data, f=d.findings;
+  const hi=f.filter(x=>x.severity==='High').length;
+  const quant=f.filter(x=>x.clause_type.startsWith('Take-or-pay')||x.clause_type.startsWith('Single-trigger')).reduce((a,x)=>a+(x.quant_gbp||0),0);
+  const clauses=d.docs.reduce((a,x)=>a+x.clauses,0);
+  const reviewed=f.filter(x=>review(x.id).status!=='Pending').length;
+  const tiles=[[d.docs.length,'Documents ingested'],[clauses,'Clauses indexed'],[f.length,'Exceptions flagged'],[hi,'High severity'],
+    [gbp(quant),'Quantified recurring/one-off cost'],[`${reviewed}/${f.length}`,'Analyst-reviewed']];
+  $('#tiles').innerHTML=tiles.map(([v,l])=>`<div class="tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+  $('#toprisks').innerHTML = d.entities.filter(e=>e.finding_ids.length).slice(0,4).map(e=>
+    `<div style="padding:6px 0;border-bottom:1px solid var(--grid)"><b>${e.rank}. ${esc(e.counterparty)}</b><span class="rag ${e.rag}">${e.rag}</span>
+     <div class="small">${e.streams.join(' - ')}${e.revenue_pct?` - ${e.revenue_pct}% of revenue`:''}</div></div>`).join('');
+  const urg = f.filter(x=>/ALREADY MET|DEADLINE|completion/.test(x.data_check));
+  $('#urgent').innerHTML = urg.map(x=>`<div style="padding:6px 0;border-bottom:1px solid var(--grid)">${sev(x.severity)} <b>${esc(x.counterparty)}</b> - cl ${x.clause}<div class="small">${esc(x.data_check)}</div></div>`).join('');
+}
+
+function renderRegister(){
+  const d=S.data;
+  const docSel=$('#fDoc');
+  if (docSel.options.length===1) d.docs.forEach(x=>docSel.add(new Option(short(x.file), x.file)));
+  const fs=$('#fSev').value, fd=$('#fDoc').value, fw=$('#fWs').value, fst=$('#fSt').value;
+  const rows=d.findings.filter(x=>(!fs||x.severity===fs)&&(!fd||x.file===fd)&&(!fw||x.workstreams.includes(fw))&&(!fst||review(x.id).status===fst));
+  $('#regBody').innerHTML = rows.map(x=>{
+    const r=review(x.id);
+    return `<tr class="click ${r.status==='Rejected'?'rejected':''}" data-id="${x.id}">
+      <td class="num">${x.id}</td><td>${sev(x.severity)}</td>
+      <td><b>${esc(x.counterparty)}</b><div class="small">${esc(short(x.file))}</div></td>
+      <td><b>${esc(x.clause_type)}</b><div class="small">${esc(x.issue)}</div><div>${x.workstreams.map(w=>`<span class="chip">${w}</span>`).join('')}</div></td>
+      <td class="num">cl ${x.clause}<br><span class="small">p${x.page}</span></td>
+      <td class="small" style="max-width:340px">${esc(x.data_check)||'<span style="color:var(--muted)">-</span>'}</td>
+      <td><div class="conf"><div class="b"><span style="width:${x.confidence*100}%"></span></div><span class="num">${Math.round(x.confidence*100)}%</span></div><div class="small">${esc(x.method)}</div></td>
+      <td><span class="status ${r.status}">${r.status}</span></td></tr>`}).join('') || '<tr><td colspan=8 class="small">No findings match the filter.</td></tr>';
+  document.querySelectorAll('#regBody tr.click').forEach(tr=>tr.onclick=()=>openDrawer(tr.dataset.id));
+}
+['#fSev','#fDoc','#fWs','#fSt'].forEach(s=>$(s).onchange=renderRegister);
+
+async function openDrawer(id){
+  const x=S.data.findings.find(f=>f.id===id), r=review(id);
+  const doc=await (await fetch('/api/doc?file='+encodeURIComponent(x.file))).json();
+  const near=doc.clauses.filter(c=>c.ref.split('.')[0]===x.clause.split('.')[0]);
+  const alert=/ALREADY MET|DEADLINE/.test(x.data_check);
+  $('#drawer').innerHTML=`<button class="close" onclick="closeDrawer()">x</button>
+    <div class="small">${x.id} - ${esc(short(x.file))}</div>
+    <h3>${esc(x.clause_type)} ${sev(x.severity)}</h3>
+    <div class="kv"><div>Counterparty</div><div>${esc(x.counterparty)}</div>
+      <div>Source</div><div>Clause ${x.clause}, page ${x.page}${x.related_clauses.length?` (related: ${x.related_clauses.join(', ')})`:''} - <a href="/api/pdf?file=${encodeURIComponent(x.file)}#page=${x.page}" target="_blank">open PDF</a></div>
+      <div>Finding</div><div>${esc(x.issue)}</div>
+      <div>Playbook rule</div><div>${esc(x.playbook_rule)}</div>
+      <div>Confidence</div><div>${Math.round(x.confidence*100)}% - ${esc(x.method)}</div>
+      <div>LLM reviewer</div><div>${esc(x.llm_note||'-')}</div>
+      <div>Workstreams</div><div>${x.workstreams.map(w=>`<span class="chip">${w}</span>`).join('')}</div></div>
+    <div class="small">Verbatim evidence</div><div class="quote">"${esc(x.evidence)}"</div>
+    ${x.data_check?`<div class="datacheck ${alert?'alert':''}"><b>Cross-check against client data</b><br>${esc(x.data_check)}</div>`:''}
+    <div class="small" style="margin-bottom:4px">Section context</div>
+    ${near.map(c=>`<div class="clause ${c.ref===x.clause?'flag':''}"><b>${c.ref}</b> ${esc(c.text)}</div>`).join('')}
+    <div class="card" style="margin-top:16px">
+      <b>Analyst decision</b> <span class="status ${r.status}">${r.status}</span>
+      <textarea id="note" rows="2" style="width:100%;margin:8px 0" placeholder="Reviewer note (required for Reject/Escalate)">${esc(r.note||'')}</textarea>
+      <button class="btn primary" onclick="decide('${id}','Accepted')">Accept</button>
+      <button class="btn" onclick="decide('${id}','Escalated')">Escalate to partner</button>
+      <button class="btn" onclick="decide('${id}','Rejected')">Reject (false positive)</button>
+    </div>`;
+  $('#drawer').classList.add('open');
+}
+function closeDrawer(){ $('#drawer').classList.remove('open'); }
+async function decide(id,status){
+  const note=$('#note').value.trim();
+  if (status!=='Accepted' && !note){ alert('Please add a note for '+status); return; }
+  const r=await (await fetch('/api/review',{method:'POST',body:JSON.stringify({id,status,note})})).json();
+  S.data.reviews=r; closeDrawer(); renderRegister(); renderOverview(); renderGov();
+}
+
+const COMP=[['Legal','--series-1'],['Commercial','--series-2'],['Operational','--series-3'],['Financial','--series-4'],['Breadth','--series-5']];
+const css=v=>getComputedStyle(document.body).getPropertyValue(v);
+function renderInsights(){
+  const ents=S.data.entities, max=Math.max(...ents.map(e=>e.score));
+  $('#stackLegend').innerHTML='<b style="color:var(--text-primary)">Score components</b>'+COMP.map(([k,v])=>`<span><i style="background:var(${v})"></i>${k}</span>`).join('');
+  $('#entities').innerHTML=ents.map(e=>`<div class="card"><div class="entity">
+    <div class="rank">${e.rank}</div>
+    <div><div style="font-size:16px;font-weight:600">${esc(e.counterparty)}<span class="rag ${e.rag}">${e.rag}</span></div>
+      <div class="small">${esc(short(e.file))}${e.revenue_gbpm?` - GBP ${e.revenue_gbpm}m FY2025 (${e.revenue_pct}% of revenue)`:''}</div>
+      <div style="margin-top:4px">${e.streams.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
+      ${e.signals.length?`<ul class="signals">${e.signals.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`:''}
+      <div class="narr">${esc(e.narrative)}</div>
+      ${e.finding_ids.length?`<div class="small" style="margin-top:6px">Linked findings: ${e.finding_ids.map(i=>`<a href="#" onclick="gotoFinding('${i}');return false">${i}</a>`).join(', ')}</div>`:''}
+    </div>
+    <div><div class="small">Risk score <b style="color:var(--text-primary);font-size:16px">${e.score}</b></div>
+      <div class="stack" style="width:${Math.max(4,e.score/max*100)}%">${COMP.filter(([k])=>e.components[k]>0).map(([k,v])=>
+        `<div data-tip="${k}: ${e.components[k]}" style="flex:${e.components[k]};background:var(${v})"></div>`).join('')}</div>
+    </div></div></div>`).join('');
+  const streams=['Legal','Commercial','Operational','Financial','Breadth'];
+  const cmax=Math.max(...ents.flatMap(e=>streams.map(s=>e.components[s])));
+  const shade=v=>{if(!v) return ['var(--seq-0)','var(--muted)'];const i=Math.min(5,Math.ceil(v/cmax*5));return [`var(--seq-${i})`, i>=3?'#fff':'var(--text-primary)'];};
+  $('#heat').innerHTML=`<tr><th>Counterparty</th>${streams.map(s=>`<th style="text-align:center">${s}</th>`).join('')}<th style="text-align:right">Total</th></tr>`+
+    ents.map(e=>`<tr><td>${esc(e.counterparty)}</td>${streams.map(s=>{const [bg,fg]=shade(e.components[s]);
+      return `<td class="c num" data-tip="${esc(e.counterparty)} - ${s}: ${e.components[s]}" style="background:${bg};color:${fg}">${e.components[s]||'-'}</td>`}).join('')}
+      <td class="num" style="text-align:right;font-weight:600">${e.score}</td></tr>`).join('');
+}
+function gotoFinding(id){ document.querySelector('[data-tab=register]').click(); openDrawer(id); }
+
+document.addEventListener('mousemove',ev=>{
+  const t=ev.target.closest('[data-tip]'), tip=$('#tip');
+  if(!t){tip.style.display='none';return;}
+  tip.textContent=t.dataset.tip; tip.style.display='block'; tip.style.left=(ev.clientX+12)+'px'; tip.style.top=(ev.clientY+12)+'px';
+});
+
+function renderDocs(){
+  $('#docs').innerHTML=S.data.docs.map(d=>`<div style="padding:8px 0;border-bottom:1px solid var(--grid)">
+    <b>${esc(short(d.file))}</b> <span class="chip">${d.kind}</span> <span class="small">${d.pages} pages - ${d.clauses} clauses</span>
+    <div class="small">${Object.entries(d.terms).map(([k,v])=>`${esc(k)}: <b style="color:var(--text-primary)">${esc(v)}</b>`).join(' - ')}</div></div>`).join('');
+}
+async function doSearch(q){
+  $('#q').value=q;
+  const hits=await (await fetch('/api/search?q='+encodeURIComponent(q))).json();
+  const terms=q.toLowerCase().split(/\W+/).filter(t=>t.length>1);
+  const hl=s=>terms.reduce((a,t)=>a.replace(new RegExp(`(${t})`,'ig'),'<mark>$1</mark>'),esc(s));
+  $('#hits').innerHTML=hits.length?hits.map(h=>`<div class="hit"><div class="m">${esc(short(h.file))} - clause ${h.ref} - page ${h.page} - ${esc(h.heading)}</div>${hl(h.text)}</div>`).join(''):'No matches.';
+}
+$('#qb').onclick=()=>doSearch($('#q').value);
+$('#q').onkeydown=e=>{if(e.key==='Enter')doSearch($('#q').value)};
+document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>doSearch(b.dataset.q));
+
+async function loadMemo(){
+  const m=await (await fetch('/api/memo')).json();
+  $('#memoText').textContent=m.memo;
+  $('#irl').innerHTML=S.data.requests.filter(r=>review(r.finding).status!=='Rejected').map(r=>`<tr><td>${sev(r.priority)}</td><td>${esc(r.request)}</td><td class="num">${r.finding}</td></tr>`).join('');
+}
+$('#refreshMemo').onclick=loadMemo;
+
+function renderGov(){
+  const e=S.data.evaluation;
+  const t=[[`${Math.round(e.recall*100)}%`,`Recall (${e.tp}/${e.expected} planted issues)`],[`${Math.round(e.precision*100)}%`,`Precision (${e.tp}/${e.flags} flags true)`],
+    [`${Math.round(e.severity_agreement*100)}%`,'Severity agreement'],[e.control_clean?'Pass':'Fail','Clean control (Bridgeway)'],[e.false_positives.length,'False positives']];
+  $('#evalTiles').innerHTML=t.map(([v,l])=>`<div class="tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+  $('#evalBody').innerHTML=e.rows.map(r=>`<tr><td class="num">${r.id}</td><td class="small">${esc(short(r.file))}</td><td class="num">${r.clause}</td>
+    <td>${sev(r.severity)}<div class="small">${esc(r.issue)}</div></td>
+    <td>${r.found?`<span class="ok">Yes</span> ${r.finding}${r.sev_match?'':` <span class="bad">(sev ${r.our_severity})</span>`}`:'<span class="bad">Missed</span>'}</td></tr>`).join('')
+    + e.false_positives.map(f=>`<tr><td>FP</td><td class="small">${esc(short(f.file))}</td><td>${f.clause}</td><td colspan=2 class="bad">${esc(f.issue)}</td></tr>`).join('');
+  const a=S.data.reviews.audit.slice().reverse();
+  $('#audit').innerHTML=a.length?a.map(x=>`<tr><td class="small num">${x.at}</td><td class="num">${x.finding}</td><td><span class="status ${x.status}">${x.status}</span></td><td class="small">${esc(x.note)}</td></tr>`).join(''):'<tr><td colspan=4 class="small">No decisions yet.</td></tr>';
+}
+$('#resetReviews').onclick=async()=>{ if(!confirm('Clear all review decisions?'))return; await fetch('/api/reset_reviews',{method:'POST'}); load(); };
+
+load();
+</script>
+</body>
+</html>
