@@ -95,8 +95,10 @@ def merge(kb, findings):
         for f in findings:
             f["llm_note"] = "LLM layer off (rules only)"
         return findings
+    # Call the API for every contract first, so a failure leaves the rule findings untouched
+    reviews = {doc["file"]: review_contract(doc)["findings"] for doc in kb}
     for doc in kb:
-        llm_fs = review_contract(doc)["findings"]
+        llm_fs = reviews[doc["file"]]
         mine = [f for f in findings if f["file"] == doc["file"]]
         used = set()
         for f in mine:
